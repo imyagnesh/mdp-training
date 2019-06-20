@@ -5,13 +5,15 @@ import { connect } from 'react-redux';
 class home extends Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
-    changeLocale: PropTypes.func.isRequired,
+    loadAuthors: PropTypes.func.isRequired,
+    loadCourses: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired,
+    courses: PropTypes.array.isRequired,
+    authors: PropTypes.array.isRequired,
+    error: PropTypes.bool.isRequired,
   };
 
   state = {
-    courses: [],
-    authors: [],
-    error: false,
     course: {
       title: '',
       watchHref: '',
@@ -23,29 +25,13 @@ class home extends Component {
 
   constructor(props) {
     super(props);
-    this.fetchData();
+    const { loadAuthors, loadCourses } = props;
+    loadAuthors();
+    loadCourses();
   }
-
-  componentDidMount() {
-    const { changeLocale } = this.props;
-    changeLocale();
-  }
-
-  fetchData = async () => {
-    try {
-      const fetchCourses = fetch('http://localhost:3004/courses');
-      const fetchAuthors = fetch('http://localhost:3004/authors');
-      const res = await Promise.all([fetchCourses, fetchAuthors]);
-      const courses = await res[0].json();
-      const authors = await res[1].json();
-      this.setState({ courses, authors });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   displayAuthor = id => {
-    const { authors } = this.state;
+    const { authors } = this.props;
     const author = authors.find(x => x.id === id);
     if (author) {
       return `${author.firstName} ${author.lastName}`;
@@ -78,25 +64,26 @@ class home extends Component {
   };
 
   deleteCourse = async course => {
-    try {
-      fetch(`http://localhost:3004/courses/${course.id}`, {
-        method: 'DELETE',
-      });
-      this.setState(state => {
-        return {
-          courses: state.courses.filter(x => x.id !== course.id),
-        };
-      });
-    } catch (error) {
-      this.setState({ error: true });
-    }
+    fetch(`http://localhost:3004/courses/${course.id}`, {
+      method: 'DELETE',
+    });
+    this.setState(state => {
+      return {
+        courses: state.courses.filter(x => x.id !== course.id),
+      };
+    });
   };
 
   render() {
-    const { courses, error } = this.state;
+    const { loading, courses, error } = this.props;
+    if (loading) {
+      return <h1>Loading....</h1>;
+    }
+    if (error) {
+      return <h1>Oops! Something went wrong</h1>;
+    }
     return (
       <div>
-        {error && <span>Oops! something went wrong</span>}
         <button type="button" onClick={this.addCourse}>
           Add Course
         </button>
@@ -140,13 +127,17 @@ class home extends Component {
 
 const fetchStoreData = state => {
   return {
-    locale: state.locale,
+    loading: state.authors.loading || state.courses.loading,
+    error: !!state.authors.error || !!state.courses.error,
+    authors: state.authors.data,
+    courses: state.courses.data,
   };
 };
 
 const dispatchAction = dispatch => {
   return {
-    changeLocale: () => dispatch({ type: 'CHANGE_LOCALE' }),
+    loadAuthors: () => dispatch({ type: 'LOAD_AUTHORS_REQUEST' }),
+    loadCourses: () => dispatch({ type: 'LOAD_COURSES_REQUEST' }),
   };
 };
 
