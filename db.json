@@ -1,0 +1,45 @@
+{
+  "courses": [
+    {
+      "id": "clean-code",
+      "title": "Clean Code: Writing Code for Humans",
+      "watchHref": "http://www.pluralsight.com/courses/writing-clean-code-humans",
+      "authorId": "cory-house",
+      "length": "3:10",
+      "category": "Software Practices"
+    },
+    {
+      "title": "title",
+      "watchHref": "www.google.com",
+      "length": "5:08",
+      "category": "react",
+      "authorId": "dan-wahlin",
+      "id": "9IHkxhs"
+    },
+    {
+      "title": "title 1",
+      "watchHref": "www.google.com",
+      "authorId": "adasdasdf",
+      "length": "5:08",
+      "category": "react",
+      "id": "x04tt~8"
+    }
+  ],
+  "authors": [
+    {
+      "id": "cory-house",
+      "firstName": "Cory",
+      "lastName": "House"
+    },
+    {
+      "id": "scott-allen",
+      "firstName": "Scott",
+      "lastName": "Allen"
+    },
+    {
+      "id": "dan-wahlin",
+      "firstName": "Dan",
+      "lastName": "Wahlin"
+    }
+  ]
+}
